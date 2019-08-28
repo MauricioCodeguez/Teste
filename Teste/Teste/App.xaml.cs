@@ -1,5 +1,6 @@
 ﻿using Prism;
 using Prism.Ioc;
+using Teste.Services;
 using Teste.ViewModels;
 using Teste.Views;
 using Xamarin.Forms;
@@ -28,6 +29,8 @@ namespace Teste
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.Register<IAPIService, APIService>();
+
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();
         }

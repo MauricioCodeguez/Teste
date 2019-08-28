@@ -1,6 +1,8 @@
 ﻿using Foundation;
 using Prism;
 using Prism.Ioc;
+using Teste.Database;
+using Teste.iOS.Providers;
 using UIKit;
 
 
@@ -32,7 +34,7 @@ namespace Teste.iOS
     {
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            // Register any platform specific implementations
+            containerRegistry.Register<ISQLite, IOSSQLite>();
         }
     }
 }

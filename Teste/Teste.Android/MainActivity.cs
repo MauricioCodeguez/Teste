@@ -3,6 +3,8 @@ using Android.Content.PM;
 using Android.OS;
 using Prism;
 using Prism.Ioc;
+using Teste.Database;
+using Teste.Droid.Providers;
 
 namespace Teste.Droid
 {
@@ -16,6 +18,7 @@ namespace Teste.Droid
 
             base.OnCreate(bundle);
 
+            Xamarin.Essentials.Platform.Init(this, bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             LoadApplication(new App(new AndroidInitializer()));
         }
@@ -25,7 +28,7 @@ namespace Teste.Droid
     {
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            // Register any platform specific implementations
+            containerRegistry.Register<ISQLite, AndroidSQLite>();
         }
     }
 }
