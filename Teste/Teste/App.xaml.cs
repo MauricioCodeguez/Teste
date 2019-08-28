@@ -1,5 +1,6 @@
 ﻿using Prism;
 using Prism.Ioc;
+using Teste.Repositories;
 using Teste.Services;
 using Teste.ViewModels;
 using Teste.Views;
@@ -24,12 +25,17 @@ namespace Teste
         {
             InitializeComponent();
 
+#if DEBUG
+            HotReloader.Current.Run(this);
+#endif
+
             await NavigationService.NavigateAsync("NavigationPage/MainPage");
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.Register<IAPIService, APIService>();
+            containerRegistry.RegisterSingleton<IAPIService, APIService>();
+            containerRegistry.Register<ICotacaoRepository, CotacaoRepository>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();

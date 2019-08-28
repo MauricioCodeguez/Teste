@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using Teste.Models;
+using Teste.Repositories;
 using Teste.Services;
 
 namespace Teste.ViewModels
@@ -14,14 +15,16 @@ namespace Teste.ViewModels
     public class MainPageViewModel : ViewModelBase
     {
         private readonly IAPIService _api;
+        private readonly ICotacaoRepository _reppository;
 
         public ObservableCollection<Moeda> ListaMoedas { get; private set; }
 
-        public MainPageViewModel(INavigationService navigationService, IAPIService api)
+        public MainPageViewModel(INavigationService navigationService, IAPIService api, ICotacaoRepository reppository)
             : base(navigationService)
         {
-            Title = "Main Page";
+            Title = "Cotações";
             _api = api;
+            _reppository = reppository;
         }
 
         public async override void OnNavigatedTo(INavigationParameters parameters)
@@ -32,6 +35,9 @@ namespace Teste.ViewModels
 
             if (result != null)
                 ListaMoedas = new ObservableCollection<Moeda>(result.Data);
+
+
+            var teste = _reppository.GetAll();
         }
     }
 }

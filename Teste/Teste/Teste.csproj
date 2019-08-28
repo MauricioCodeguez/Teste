@@ -10,10 +10,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.3.0" />
     <PackageReference Include="Xamarin.Forms" Version="4.2.0.709249" />
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.2.0.1367" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repositories\" />
+    <PackageReference Include="Xamarin.HotReload" Version="1.4.19" />
   </ItemGroup>
 
 </Project>
