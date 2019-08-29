@@ -1,6 +1,6 @@
 # Teste
 Aplicativo Teste de Cadastro de Cotação
 
-*********** List of third-party libraries used ***********
+*********** Lista de biblioteca de terceiros usadas no projeto ***********
 
 Prism
