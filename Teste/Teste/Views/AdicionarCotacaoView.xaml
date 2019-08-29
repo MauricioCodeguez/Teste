@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Teste.Views.AdicionarCotacaoView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding Title}"
+    mc:Ignorable="d">
+    <ContentPage.Content>
+        <StackLayout Margin="10">
+            <StackLayout Spacing="0">
+                <Label Text="Data da Cotação" />
+                <DatePicker Date="{Binding DataCotacao}" />
+            </StackLayout>
+
+            <Picker
+                Title="Selecione a Moeda"
+                ItemDisplayBinding="{Binding NomeFormatado}"
+                ItemsSource="{Binding Moedas}"
+                SelectedItem="{Binding MoedaSelecionada, Mode=TwoWay}" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackLayout Grid.Column="0" Spacing="0">
+                    <Label Text="Valor de Venda" />
+                    <Entry Keyboard="Numeric" Text="{Binding ValorVenda, Converter={StaticResource CurrencyConverter}}" />
+                </StackLayout>
+                <StackLayout Grid.Column="1" Spacing="0">
+                    <Label Text="Valor de Compra" />
+                    <Entry
+                        Grid.Column="1"
+                        Keyboard="Numeric"
+                        Text="{Binding ValorCompra, Converter={StaticResource CurrencyConverter}}" />
+                </StackLayout>
+            </Grid>
+
+            <Button
+                BackgroundColor="#2196F3"
+                Command="{Binding AlterarMoedaCommand}"
+                Text="Adicionar"
+                TextColor="White" />
+
+            <Button
+                BackgroundColor="Red"
+                Command="{Binding ExcluirMoedaCommand}"
+                IsVisible="{Binding ExcluirVisivel}"
+                Text="Excluir"
+                TextColor="White" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

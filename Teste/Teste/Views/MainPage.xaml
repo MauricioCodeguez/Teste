@@ -3,10 +3,99 @@
     x:Class="Teste.Views.MainPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="CotacaoPage"
     Title="{Binding Title}">
 
-    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-        <Label Text="Welcome to Xamarin Forms and!" />
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding NovaCotacaoCommand}"
+            IconImageSource="plus.png"
+            Text="Add" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+        <ListView
+            Margin="10"
+            HasUnevenRows="True"
+            IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBooleanConverter}}"
+            ItemsSource="{Binding ListaCotacao}"
+            SelectedItem="{Binding CotacaoSelecionada, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.ContextActions>
+                            <MenuItem
+                                Command="{Binding Path=BindingContext.EditarCommand, Source={x:Reference Name=CotacaoPage}}"
+                                CommandParameter="{Binding .}"
+                                Text="Editar" />
+                            <MenuItem
+                                Command="{Binding Path=BindingContext.ExcluirCommand, Source={x:Reference Name=CotacaoPage}}"
+                                CommandParameter="{Binding .}"
+                                IsDestructive="True"
+                                Text="Deletar" />
+                        </ViewCell.ContextActions>
+                        <StackLayout Margin="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="7*" />
+                                    <ColumnDefinition Width="3*" />
+                                </Grid.ColumnDefinitions>
+                                <StackLayout
+                                    Grid.Column="0"
+                                    HorizontalOptions="Start"
+                                    Spacing="0"
+                                    VerticalOptions="Center">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="Large"
+                                        Text="{Binding NomeFormatado}"
+                                        TextColor="Black" />
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="Small"
+                                        Text="{Binding SimboloMoeda}"
+                                        TextColor="Black" />
+                                </StackLayout>
+                                <StackLayout
+                                    Grid.Column="1"
+                                    HorizontalOptions="End"
+                                    Spacing="0"
+                                    VerticalOptions="Center">
+                                    <Label FontSize="Micro" Text="Data Cotação" />
+                                    <Label Text="{Binding DataCotacao, Converter={StaticResource DataConverter}}" VerticalTextAlignment="Center" />
+                                </StackLayout>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackLayout Grid.Column="0" Spacing="0">
+                                    <Label Text="Valor Compra" />
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="Medium"
+                                        Text="{Binding ValorCompra, Converter={StaticResource CurrencyConverter}}"
+                                        TextColor="Black" />
+                                </StackLayout>
+                                <StackLayout Grid.Column="1" Spacing="0">
+                                    <Label Text="Valor Venda" />
+                                    <Label
+                                        FontAttributes="Bold"
+                                        FontSize="Medium"
+                                        Text="{Binding ValorVenda, Converter={StaticResource CurrencyConverter}}"
+                                        TextColor="Black" />
+                                </StackLayout>
+                            </Grid>
+
+
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </StackLayout>
 
 </ContentPage>

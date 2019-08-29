@@ -19,7 +19,7 @@ namespace Teste.Services
 
         public async Task<ServiceResult<Moeda>> GetMoedas()
         {
-            ServiceResult<Moeda> retorno = null;
+            ServiceResult<Moeda> retorno = new ServiceResult<Moeda>();
 
             var network = Connectivity.NetworkAccess;
 
@@ -30,9 +30,14 @@ namespace Teste.Services
                     var response = await client.GetAsync(new Uri(_endPoint));
 
                     if (response.IsSuccessStatusCode)
+                    {
                         retorno = JsonConvert.DeserializeObject<ServiceResult<Moeda>>(await response.Content.ReadAsStringAsync());
+                        retorno.Status = Enum.ServiceResultStatus.Ok;
+                    }
                 }
             }
+            else
+                retorno.Status = Enum.ServiceResultStatus.SemConexao;
 
             return retorno;
         }

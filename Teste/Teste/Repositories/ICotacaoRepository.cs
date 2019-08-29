@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Teste.Models;
 
 namespace Teste.Repositories
 {
     public interface ICotacaoRepository
     {
+        int DeletarCotacao(Cotacao cotacao);
         bool Save(Cotacao cotacao);
-        IEnumerable<Cotacao> GetAll();
+        IEnumerable<Cotacao> GetAllCotacao();
+        Cotacao GetCotacao(decimal codigoCotacao);
     }
 }

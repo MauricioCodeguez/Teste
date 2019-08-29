@@ -88,5 +88,11 @@ namespace Teste.Database
             lock (_locker)
                 return _conexao.Table<Cotacao>().ToList();
         }
+
+        public Cotacao GetCotacao(decimal codigoCotacao)
+        {
+            lock (_locker)
+                return _conexao.Table<Cotacao>().FirstOrDefault(a => a.CodigoCotacao == codigoCotacao);
+        }
     }
 }

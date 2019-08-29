@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Teste.Models;
 
 namespace Teste.Repositories
@@ -14,7 +13,11 @@ namespace Teste.Repositories
             _db = new Database.Database();
         }
 
-        public IEnumerable<Cotacao> GetAll() => _db.GetCotacoes();
+        public int DeletarCotacao(Cotacao cotacao) => _db.Delete(cotacao);
+
+        public IEnumerable<Cotacao> GetAllCotacao() => _db.GetCotacoes();
+
+        public Cotacao GetCotacao(decimal codigoCotacao) => _db.GetCotacao(codigoCotacao);
 
         public bool Save(Cotacao cotacao) => _db.Save(cotacao);
     }
