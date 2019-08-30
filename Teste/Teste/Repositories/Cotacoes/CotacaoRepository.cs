@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Teste.Models;
 
-namespace Teste.Repositories
+namespace Teste.Repositories.Cotacoes
 {
     public class CotacaoRepository : ICotacaoRepository
     {

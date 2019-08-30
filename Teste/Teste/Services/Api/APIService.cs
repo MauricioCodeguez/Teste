@@ -4,7 +4,7 @@ using Teste.Classes;
 using Teste.Models;
 using Teste.Services.Request;
 
-namespace Teste.Services
+namespace Teste.Services.Api
 {
     public class APIService : IAPIService
     {

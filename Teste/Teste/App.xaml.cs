@@ -1,7 +1,7 @@
 ﻿using Prism;
 using Prism.Ioc;
-using Teste.Repositories;
-using Teste.Services;
+using Teste.Repositories.Cotacoes;
+using Teste.Services.Api;
 using Teste.Services.Request;
 using Teste.ViewModels;
 using Teste.Views;

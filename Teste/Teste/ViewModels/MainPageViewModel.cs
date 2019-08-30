@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Teste.Models;
-using Teste.Repositories;
+using Teste.Repositories.Cotacoes;
 
 namespace Teste.ViewModels
 {
@@ -17,14 +17,14 @@ namespace Teste.ViewModels
         private List<Cotacao> listaCotacao;
         public List<Cotacao> ListaCotacao
         {
-            get { return listaCotacao; }
-            set { SetProperty(ref listaCotacao, value); }
+            get => listaCotacao;
+            set => SetProperty(ref listaCotacao, value);
         }
 
         private Cotacao cotacaoSelecionada;
         public Cotacao CotacaoSelecionada
         {
-            get { return cotacaoSelecionada; }
+            get => cotacaoSelecionada;
             set
             {
                 if (SetProperty(ref cotacaoSelecionada, value))
@@ -39,7 +39,8 @@ namespace Teste.ViewModels
         public DelegateCommand<Cotacao> EditarCommand { get; private set; }
         public DelegateCommand<Cotacao> ExcluirCommand { get; private set; }
 
-        public MainPageViewModel(INavigationService navigationService,
+        public MainPageViewModel(
+            INavigationService navigationService,
             IPageDialogService pageDialog,
             ICotacaoRepository cotacaoRepository)
             : base(navigationService)
@@ -56,10 +57,7 @@ namespace Teste.ViewModels
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
-
-            IsBusy = true;
             ListaCotacao = _cotacaoRepository.GetAllCotacao().ToList();
-            IsBusy = false;
         }
 
         private void NovaCotacao() => NavigationService.NavigateAsync("AdicionarCotacaoView");

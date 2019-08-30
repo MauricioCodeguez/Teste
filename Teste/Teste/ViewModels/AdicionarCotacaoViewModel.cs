@@ -8,8 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Teste.Exceptions;
 using Teste.Models;
-using Teste.Repositories;
-using Teste.Services;
+using Teste.Repositories.Cotacoes;
+using Teste.Services.Api;
 
 namespace Teste.ViewModels
 {
@@ -21,47 +21,53 @@ namespace Teste.ViewModels
 
         private Cotacao cotacao;
 
-        private List<Moeda> moedas;
-        public List<Moeda> Moedas
+        private IEnumerable<Moeda> moedas;
+        public IEnumerable<Moeda> Moedas
         {
-            get { return moedas; }
-            set { SetProperty(ref moedas, value); }
+            get => moedas;
+            set => SetProperty(ref moedas, value);
         }
 
         private DateTime dataCotacao = DateTime.Now;
         public DateTime DataCotacao
         {
-            get { return dataCotacao; }
-            set { SetProperty(ref dataCotacao, value); }
+            get => dataCotacao;
+            set => SetProperty(ref dataCotacao, value);
         }
 
         private decimal valorVenda;
         public decimal ValorVenda
         {
-            get { return valorVenda; }
-            set { SetProperty(ref valorVenda, value); }
+            get => valorVenda;
+            set => SetProperty(ref valorVenda, value);
         }
 
         private decimal valorCompra;
         public decimal ValorCompra
         {
-            get { return valorCompra; }
-            set { SetProperty(ref valorCompra, value); }
+            get => valorCompra;
+            set => SetProperty(ref valorCompra, value);
         }
 
         private Moeda moedaSelecionada;
         public Moeda MoedaSelecionada
         {
-            get { return moedaSelecionada; }
-            set { SetProperty(ref moedaSelecionada, value); }
+            get => moedaSelecionada;
+            set => SetProperty(ref moedaSelecionada, value);
         }
 
-        public bool ExcluirVisivel { get; private set; }
+        private bool excluirVisivel;
+        public bool ExcluirVisivel
+        {
+            get => excluirVisivel;
+            set => SetProperty(ref excluirVisivel, value);
+        }
 
         public DelegateCommand AlterarMoedaCommand { get; private set; }
         public DelegateCommand ExcluirMoedaCommand { get; private set; }
 
-        public AdicionarCotacaoViewModel(INavigationService navigationService,
+        public AdicionarCotacaoViewModel(
+            INavigationService navigationService,
             IPageDialogService dialogService,
             IAPIService api,
             ICotacaoRepository cotacaoRepository)
@@ -73,6 +79,7 @@ namespace Teste.ViewModels
             _cotacaoRepository = cotacaoRepository;
             moedas = new List<Moeda>();
             moedaSelecionada = new Moeda();
+            excluirVisivel = false;
 
             AlterarMoedaCommand = new DelegateCommand(async () => await Salvar());
             ExcluirMoedaCommand = new DelegateCommand(async () => await Excluir());
