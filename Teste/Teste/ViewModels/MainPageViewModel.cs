@@ -29,7 +29,7 @@ namespace Teste.ViewModels
             {
                 if (SetProperty(ref cotacaoSelecionada, value))
                 {
-                    Task.Run(async () => await Editar(cotacaoSelecionada));
+                    Editar(cotacaoSelecionada);
                     CotacaoSelecionada = null;
                 }
             }
