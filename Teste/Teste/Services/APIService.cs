@@ -1,45 +1,26 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Net.Http;
+﻿using System;
 using System.Threading.Tasks;
 using Teste.Classes;
 using Teste.Models;
-using Xamarin.Essentials;
+using Teste.Services.Request;
 
 namespace Teste.Services
 {
     public class APIService : IAPIService
     {
-        private readonly string _endPoint;
+        private readonly IRequestService _requestService;
 
-        public APIService()
+        public APIService(IRequestService requestService)
         {
-            _endPoint = "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/Moedas?$top=100&$format=json";
+            _requestService = requestService;
         }
 
         public async Task<ServiceResult<Moeda>> GetMoedas()
         {
-            ServiceResult<Moeda> retorno = new ServiceResult<Moeda>();
+            var builder = new UriBuilder(AppSettings.EndPoint);
+            var uri = builder.ToString();
 
-            var network = Connectivity.NetworkAccess;
-
-            if (network == NetworkAccess.Internet)
-            {
-                using (var client = new HttpClient())
-                {
-                    var response = await client.GetAsync(new Uri(_endPoint));
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        retorno = JsonConvert.DeserializeObject<ServiceResult<Moeda>>(await response.Content.ReadAsStringAsync());
-                        retorno.Status = Enum.ServiceResultStatus.Ok;
-                    }
-                }
-            }
-            else
-                retorno.Status = Enum.ServiceResultStatus.SemConexao;
-
-            return retorno;
+            return await _requestService.GetAsync<ServiceResult<Moeda>>(uri);
         }
     }
 }

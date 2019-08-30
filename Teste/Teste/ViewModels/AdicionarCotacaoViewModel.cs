@@ -1,11 +1,12 @@
 ﻿using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
-using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Teste.Exceptions;
 using Teste.Models;
 using Teste.Repositories;
 using Teste.Services;
@@ -55,12 +56,7 @@ namespace Teste.ViewModels
             set { SetProperty(ref moedaSelecionada, value); }
         }
 
-        private bool excluirVisivel;
-        public bool ExcluirVisivel
-        {
-            get { return excluirVisivel; }
-            set { SetProperty(ref excluirVisivel, value); }
-        }
+        public bool ExcluirVisivel { get; private set; }
 
         public DelegateCommand AlterarMoedaCommand { get; private set; }
         public DelegateCommand ExcluirMoedaCommand { get; private set; }
@@ -77,38 +73,41 @@ namespace Teste.ViewModels
             _cotacaoRepository = cotacaoRepository;
             moedas = new List<Moeda>();
             moedaSelecionada = new Moeda();
-            excluirVisivel = false;
 
             AlterarMoedaCommand = new DelegateCommand(async () => await Salvar());
             ExcluirMoedaCommand = new DelegateCommand(async () => await Excluir());
         }
 
-        public async override void OnNavigatedTo(INavigationParameters parameters)
+        public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
 
-            if (parameters.GetNavigationMode() == NavigationMode.New)
+            try
             {
-                var result = await _api.GetMoedas();
-
-                if (result.Status == Enum.ServiceResultStatus.Ok)
-                    Moedas = result.Data.ToList();
-                else
-                    await _dialogService.DisplayAlertAsync("Aviso Conexão", "Você está sem conexão para carregar o combo de Moedas.", "Ok");
-
-                if (parameters.Count > 0)
+                if (parameters.GetNavigationMode() == NavigationMode.New)
                 {
-                    ExcluirVisivel = true;
+                    var moedas = await _api.GetMoedas();
+                    Moedas = moedas.Data.ToList();
 
-                    var codigoCotacao = Convert.ToDecimal(parameters["cotacao"]);
+                    if (parameters.Count > 0)
+                    {
+                        ExcluirVisivel = true;
 
-                    cotacao = _cotacaoRepository.GetCotacao(codigoCotacao);
+                        var codigoCotacao = Convert.ToDecimal(parameters["cotacao"]);
 
-                    DataCotacao = cotacao.DataCotacao;
-                    ValorCompra = cotacao.ValorCompra;
-                    ValorVenda = cotacao.ValorVenda;
-                    MoedaSelecionada = Moedas?.FirstOrDefault(a => a.Simbolo == cotacao.SimboloMoeda);
+                        cotacao = _cotacaoRepository.GetCotacao(codigoCotacao);
+
+                        DataCotacao = cotacao.DataCotacao;
+                        ValorCompra = cotacao.ValorCompra;
+                        ValorVenda = cotacao.ValorVenda;
+                        MoedaSelecionada = Moedas?.FirstOrDefault(a => a.Simbolo == cotacao.SimboloMoeda);
+                    }
                 }
+            }
+            catch (ConnectivityException cex)
+            {
+                Debug.WriteLine($"Connectivity Error: {cex}");
+                await _dialogService.DisplayAlertAsync("Aviso Conexão", "Você está sem conexão para carregar o combo de Moedas.", "Ok");
             }
         }
 
