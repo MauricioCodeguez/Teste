@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 using Teste.Exceptions;
 using Teste.Models;
 using Teste.Repositories.Cotacoes;
+using Teste.Repositories.Moedas;
 using Teste.Services.Api;
 
 namespace Teste.ViewModels
 {
     public class AdicionarCotacaoViewModel : ViewModelBase
     {
-        private readonly IAPIService _api;
+        private readonly IMoedaRepository _moedaRepository;
         private readonly ICotacaoRepository _cotacaoRepository;
         private readonly IPageDialogService _dialogService;
 
@@ -69,12 +70,12 @@ namespace Teste.ViewModels
         public AdicionarCotacaoViewModel(
             INavigationService navigationService,
             IPageDialogService dialogService,
-            IAPIService api,
+            IMoedaRepository moedaRepository,
             ICotacaoRepository cotacaoRepository)
             : base(navigationService)
         {
             Title = "Nova Cotação";
-            _api = api;
+            _moedaRepository = moedaRepository;
             _dialogService = dialogService;
             _cotacaoRepository = cotacaoRepository;
             moedas = new List<Moeda>();
@@ -93,8 +94,7 @@ namespace Teste.ViewModels
             {
                 if (parameters.GetNavigationMode() == NavigationMode.New)
                 {
-                    var moedas = await _api.GetMoedas();
-                    Moedas = moedas.Data.ToList();
+                    Moedas = await _moedaRepository.GetMoedasAsync();
 
                     if (parameters.Count > 0)
                     {
@@ -111,9 +111,9 @@ namespace Teste.ViewModels
                     }
                 }
             }
-            catch (ConnectivityException cex)
+            catch (ConnectivityException cEx)
             {
-                Debug.WriteLine($"Connectivity Error: {cex}");
+                Debug.WriteLine($"Connectivity Error: {cEx}");
                 await _dialogService.DisplayAlertAsync("Aviso Conexão", "Você está sem conexão para carregar o combo de Moedas.", "Ok");
             }
         }

@@ -3,7 +3,7 @@ using Teste.Models;
 
 namespace Teste.Repositories.Cotacoes
 {
-    public class CotacaoRepository : ICotacaoRepository
+    public sealed class CotacaoRepository : ICotacaoRepository
     {
         private readonly Database.Database _db;
 
