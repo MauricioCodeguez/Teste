@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Teste.Models;
 
-namespace Teste.Repositories
+namespace Teste.Repositories.Cotacoes
 {
-    public class CotacaoRepository : ICotacaoRepository
+    public sealed class CotacaoRepository : ICotacaoRepository
     {
         private readonly Database.Database _db;
 
         public CotacaoRepository()
         {
-            _db = new Database.Database();
+            _db = Database.Database.Current;
         }
 
         public int DeletarCotacao(Cotacao cotacao) => _db.Delete(cotacao);

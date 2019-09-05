@@ -2,7 +2,7 @@
 using Teste.Classes;
 using Teste.Models;
 
-namespace Teste.Services
+namespace Teste.Services.Api
 {
     public interface IAPIService
     {

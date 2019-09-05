@@ -1,78 +1,81 @@
 ﻿using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
-using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Teste.Exceptions;
 using Teste.Models;
-using Teste.Repositories;
-using Teste.Services;
+using Teste.Repositories.Cotacoes;
+using Teste.Repositories.Moedas;
+using Teste.Services.Api;
 
 namespace Teste.ViewModels
 {
     public class AdicionarCotacaoViewModel : ViewModelBase
     {
-        private readonly IAPIService _api;
+        private readonly IMoedaRepository _moedaRepository;
         private readonly ICotacaoRepository _cotacaoRepository;
         private readonly IPageDialogService _dialogService;
 
         private Cotacao cotacao;
 
-        private List<Moeda> moedas;
-        public List<Moeda> Moedas
+        private IEnumerable<Moeda> moedas;
+        public IEnumerable<Moeda> Moedas
         {
-            get { return moedas; }
-            set { SetProperty(ref moedas, value); }
+            get => moedas;
+            set => SetProperty(ref moedas, value);
         }
 
         private DateTime dataCotacao = DateTime.Now;
         public DateTime DataCotacao
         {
-            get { return dataCotacao; }
-            set { SetProperty(ref dataCotacao, value); }
+            get => dataCotacao;
+            set => SetProperty(ref dataCotacao, value);
         }
 
         private decimal valorVenda;
         public decimal ValorVenda
         {
-            get { return valorVenda; }
-            set { SetProperty(ref valorVenda, value); }
+            get => valorVenda;
+            set => SetProperty(ref valorVenda, value);
         }
 
         private decimal valorCompra;
         public decimal ValorCompra
         {
-            get { return valorCompra; }
-            set { SetProperty(ref valorCompra, value); }
+            get => valorCompra;
+            set => SetProperty(ref valorCompra, value);
         }
 
         private Moeda moedaSelecionada;
         public Moeda MoedaSelecionada
         {
-            get { return moedaSelecionada; }
-            set { SetProperty(ref moedaSelecionada, value); }
+            get => moedaSelecionada;
+            set => SetProperty(ref moedaSelecionada, value);
         }
 
         private bool excluirVisivel;
         public bool ExcluirVisivel
         {
-            get { return excluirVisivel; }
-            set { SetProperty(ref excluirVisivel, value); }
+            get => excluirVisivel;
+            set => SetProperty(ref excluirVisivel, value);
         }
 
         public DelegateCommand AlterarMoedaCommand { get; private set; }
         public DelegateCommand ExcluirMoedaCommand { get; private set; }
 
-        public AdicionarCotacaoViewModel(INavigationService navigationService,
+        public AdicionarCotacaoViewModel(
+            INavigationService navigationService,
             IPageDialogService dialogService,
-            IAPIService api,
+            IMoedaRepository moedaRepository,
             ICotacaoRepository cotacaoRepository)
             : base(navigationService)
         {
             Title = "Nova Cotação";
-            _api = api;
+            _moedaRepository = moedaRepository;
             _dialogService = dialogService;
             _cotacaoRepository = cotacaoRepository;
             moedas = new List<Moeda>();
@@ -83,32 +86,35 @@ namespace Teste.ViewModels
             ExcluirMoedaCommand = new DelegateCommand(async () => await Excluir());
         }
 
-        public async override void OnNavigatedTo(INavigationParameters parameters)
+        public override async void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
 
-            if (parameters.GetNavigationMode() == NavigationMode.New)
+            try
             {
-                var result = await _api.GetMoedas();
-
-                if (result.Status == Enum.ServiceResultStatus.Ok)
-                    Moedas = result.Data.ToList();
-                else
-                    await _dialogService.DisplayAlertAsync("Aviso Conexão", "Você está sem conexão para carregar o combo de Moedas.", "Ok");
-
-                if (parameters.Count > 0)
+                if (parameters.GetNavigationMode() == NavigationMode.New)
                 {
-                    ExcluirVisivel = true;
+                    Moedas = await _moedaRepository.GetMoedasAsync();
 
-                    var codigoCotacao = Convert.ToDecimal(parameters["cotacao"]);
+                    if (parameters.Count > 0)
+                    {
+                        ExcluirVisivel = true;
 
-                    cotacao = _cotacaoRepository.GetCotacao(codigoCotacao);
+                        var codigoCotacao = Convert.ToDecimal(parameters["cotacao"]);
 
-                    DataCotacao = cotacao.DataCotacao;
-                    ValorCompra = cotacao.ValorCompra;
-                    ValorVenda = cotacao.ValorVenda;
-                    MoedaSelecionada = Moedas?.FirstOrDefault(a => a.Simbolo == cotacao.SimboloMoeda);
+                        cotacao = _cotacaoRepository.GetCotacao(codigoCotacao);
+
+                        DataCotacao = cotacao.DataCotacao;
+                        ValorCompra = cotacao.ValorCompra;
+                        ValorVenda = cotacao.ValorVenda;
+                        MoedaSelecionada = Moedas?.FirstOrDefault(a => a.Simbolo == cotacao.SimboloMoeda);
+                    }
                 }
+            }
+            catch (ConnectivityException cEx)
+            {
+                Debug.WriteLine($"Connectivity Error: {cEx}");
+                await _dialogService.DisplayAlertAsync("Aviso Conexão", "Você está sem conexão para carregar o combo de Moedas.", "Ok");
             }
         }
 

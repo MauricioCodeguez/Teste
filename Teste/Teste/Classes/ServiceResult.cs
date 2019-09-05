@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using Teste.Enum;
 
 namespace Teste.Classes
 {
@@ -8,6 +7,5 @@ namespace Teste.Classes
     {
         [JsonProperty("value")]
         public IEnumerable<T> Data { get; set; }
-        public ServiceResultStatus Status { get; set; }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Prism;
 using Prism.Ioc;
-using Teste.Repositories;
-using Teste.Services;
+using Teste.Repositories.Cotacoes;
+using Teste.Repositories.Moedas;
+using Teste.Services.Api;
+using Teste.Services.Request;
 using Teste.ViewModels;
 using Teste.Views;
 using Xamarin.Forms;
@@ -34,9 +36,25 @@ namespace Teste
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IAPIService, APIService>();
-            containerRegistry.Register<ICotacaoRepository, CotacaoRepository>();
+            RegisterServices(containerRegistry);
+            RegisterRepositories(containerRegistry);
+            RegisterNavigations(containerRegistry);
+        }
 
+        private void RegisterServices(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<IAPIService, APIService>();
+            containerRegistry.Register<IRequestService, RequestService>();
+        }
+
+        private void RegisterRepositories(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<ICotacaoRepository, CotacaoRepository>();
+            containerRegistry.Register<IMoedaRepository, MoedaRepository>();
+        }
+
+        private void RegisterNavigations(IContainerRegistry containerRegistry)
+        {
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage, MainPageViewModel>();
             containerRegistry.RegisterForNavigation<AdicionarCotacaoView, AdicionarCotacaoViewModel>();
