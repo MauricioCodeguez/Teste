@@ -27,10 +27,6 @@ namespace Teste
         {
             InitializeComponent();
 
-#if DEBUG
-            HotReloader.Current.Run(this);
-#endif
-
             await NavigationService.NavigateAsync("NavigationPage/MainPage");
         }
 

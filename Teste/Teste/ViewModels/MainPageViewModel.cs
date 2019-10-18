@@ -1,9 +1,9 @@
 ﻿using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Teste.Extensions;
 using Teste.Models;
 using Teste.Repositories.Cotacoes;
 
@@ -14,7 +14,12 @@ namespace Teste.ViewModels
         private readonly ICotacaoRepository _cotacaoRepository;
         private readonly IPageDialogService _pageDialog;
 
-        public ObservableCollection<Cotacao> ListaCotacao { get; private set; }
+        private List<Cotacao> _listaCotacao;
+        public List<Cotacao> ListaCotacao
+        {
+            get { return _listaCotacao; }
+            set { SetProperty(ref _listaCotacao, value); }
+        }
 
         private Cotacao cotacaoSelecionada;
         public Cotacao CotacaoSelecionada
@@ -46,17 +51,12 @@ namespace Teste.ViewModels
             ExcluirCommand = new DelegateCommand<Cotacao>(async (a) => await Excluir(a));
             _cotacaoRepository = cotacaoRepository;
             _pageDialog = pageDialog;
-            ListaCotacao = new ObservableCollection<Cotacao>();
+            _listaCotacao = new List<Cotacao>();
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
-            base.OnNavigatedTo(parameters);
-
-            var listaCotacao = _cotacaoRepository.GetAllCotacao().ToObservable();
-
-            foreach (var item in listaCotacao)
-                ListaCotacao.Add(item);
+            CarregarListaCotacao();
         }
 
         private async Task NovaCotacao() => await NavigationService.NavigateAsync("AdicionarCotacaoView");
@@ -72,9 +72,13 @@ namespace Teste.ViewModels
                 if (resp)
                 {
                     _cotacaoRepository.DeletarCotacao(cot);
-                    ListaCotacao.Remove(cot);
+
+                    if (ListaCotacao.Remove(cot))
+                        CarregarListaCotacao();
                 }
             }
         }
+
+        private void CarregarListaCotacao() => ListaCotacao = _cotacaoRepository.GetAllCotacao().ToList();
     }
 }
