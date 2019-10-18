@@ -1,9 +1,9 @@
 ﻿using Prism.Commands;
 using Prism.Navigation;
 using Prism.Services;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Teste.Extensions;
 using Teste.Models;
 using Teste.Repositories.Cotacoes;
 
@@ -14,12 +14,7 @@ namespace Teste.ViewModels
         private readonly ICotacaoRepository _cotacaoRepository;
         private readonly IPageDialogService _pageDialog;
 
-        private List<Cotacao> listaCotacao;
-        public List<Cotacao> ListaCotacao
-        {
-            get => listaCotacao;
-            set => SetProperty(ref listaCotacao, value);
-        }
+        public ObservableCollection<Cotacao> ListaCotacao { get; private set; }
 
         private Cotacao cotacaoSelecionada;
         public Cotacao CotacaoSelecionada
@@ -46,21 +41,25 @@ namespace Teste.ViewModels
             : base(navigationService)
         {
             Title = "Minhas Cotações";
-            NovaCotacaoCommand = new DelegateCommand(NovaCotacao);
+            NovaCotacaoCommand = new DelegateCommand(async () => await NovaCotacao());
             EditarCommand = new DelegateCommand<Cotacao>(async (a) => await Editar(a));
             ExcluirCommand = new DelegateCommand<Cotacao>(async (a) => await Excluir(a));
             _cotacaoRepository = cotacaoRepository;
             _pageDialog = pageDialog;
-            listaCotacao = new List<Cotacao>();
+            ListaCotacao = new ObservableCollection<Cotacao>();
         }
 
         public override void OnNavigatedTo(INavigationParameters parameters)
         {
             base.OnNavigatedTo(parameters);
-            ListaCotacao = _cotacaoRepository.GetAllCotacao().ToList();
+
+            var listaCotacao = _cotacaoRepository.GetAllCotacao().ToObservable();
+
+            foreach (var item in listaCotacao)
+                ListaCotacao.Add(item);
         }
 
-        private void NovaCotacao() => NavigationService.NavigateAsync("AdicionarCotacaoView");
+        private async Task NovaCotacao() => await NavigationService.NavigateAsync("AdicionarCotacaoView");
 
         private async Task Editar(Cotacao cot) => await NavigationService.NavigateAsync($"AdicionarCotacaoView?cotacao={cot.CodigoCotacao}");
 
@@ -73,9 +72,7 @@ namespace Teste.ViewModels
                 if (resp)
                 {
                     _cotacaoRepository.DeletarCotacao(cot);
-
-                    if (ListaCotacao.Remove(cot))
-                        ListaCotacao = _cotacaoRepository.GetAllCotacao().ToList();
+                    ListaCotacao.Remove(cot);
                 }
             }
         }
