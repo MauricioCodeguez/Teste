@@ -1,9 +1,10 @@
-﻿using SQLite;
+﻿using Prism;
+using Prism.Ioc;
+using SQLite;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Teste.Models;
-using Xamarin.Forms;
 
 namespace Teste.Database
 {
@@ -17,7 +18,7 @@ namespace Teste.Database
 
         public Database()
         {
-            _conexao = DependencyService.Get<ISQLite>().GetConnection();
+            _conexao = PrismApplicationBase.Current.Container.Resolve<ISQLite>().GetConnection();
             _conexao.CreateTable<Cotacao>();
         }
 
